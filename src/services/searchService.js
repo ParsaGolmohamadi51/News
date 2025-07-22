@@ -1,6 +1,6 @@
 export async function sendSearchQuery(query) {
   try {
-    const response = await fetch("https://your-api-url.com/search", {
+    const response = await fetch("http://localhost:8080/news/search", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -15,7 +15,7 @@ export async function sendSearchQuery(query) {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Search error:", error.message);
-    throw error;
+    console.error("خطا:", error);
+    return [];
   }
 }

@@ -5,19 +5,19 @@ import Text from "@/components/atoms/Text";
 import SearchBar from "@/components/molecules/SearchBar";
 import DatePicker from "@/components/atoms/DatePicker";
 import { sendSearchQuery } from "@/services/searchService";
-import CategoryList from "@/components/molecules/CategoryList";
+import { useSearch } from "@/context/SearchContext";
 
 export default function Header() {
   const [searchText, setSearchText] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const buttonRef = useRef(null);
+  const { setSearchResults } = useSearch();
 
   const handleSearch = async () => {
     try {
       const result = await sendSearchQuery(searchText);
-      console.log("نتایج جستجو:", result);
+      setSearchResults(result);
     } catch (err) {
       alert("مشکلی در جستجو پیش آمد.");
     }
@@ -31,7 +31,7 @@ export default function Header() {
         buttonRef.current &&
         !buttonRef.current.contains(event.target)
       ) {
-        setIsMenuOpen(false);
+        // اگر منویی باز داری، اینجا باید با useState کنترلش کنی
       }
     };
 
@@ -57,29 +57,6 @@ export default function Header() {
           <Text className="text-sm sm:text-xl font-bold">سایت خبری تروسکه</Text>
         </div>
 
-        <div className="block sm:hidden">
-          <button
-            ref={buttonRef}
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="text-3xl"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="size-5 sm:size-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-              />
-            </svg>
-          </button>
-        </div>
-
         <div className="hidden sm:flex w-[40rem]">
           <SearchBar
             value={searchText}
@@ -89,23 +66,8 @@ export default function Header() {
         </div>
       </div>
 
-      {isMenuOpen && (
-        <div
-          ref={menuRef}
-          className="sm:hidden absolute top-0 w-1/2 bg-white text-black shadow z-50"
-        >
-          <CategoryList isMobile />
-        </div>
-      )}
-
-      <section className="hidden sm:flex justify-center items-center">
-        <div className="-mt-6 w-5/6 py-2">
-          <CategoryList />
-        </div>
-      </section>
-
       <section className="flex justify-center items-center sm:hidden py-7">
-        <div className="-mt-6 w-5/6 py-2">
+        <div className="w-5/6 py-2">
           <SearchBar
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}

@@ -1,55 +1,41 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Card from "@/components/molecules/Card";
+import { fetchNews } from "@/services/newsService";
+import { useSearch } from "@/context/SearchContext";
 
 export default function NewsSection() {
+  const [newsList, setNewsList] = useState([]);
+  const { searchResults } = useSearch();
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const data = await fetchNews();
+        setNewsList(data);
+      } catch (err) {
+        console.error("خطا در دریافت اخبار:", err.message);
+      }
+    };
+
+    getData();
+  }, []);
+
+  const listToShow = searchResults || newsList;
+
   return (
-    <section className="w-full flex flex-col justify-center items-center bg-white py-2">
+    <section className="w-full flex flex-col justify-center items-center bg-white py-14">
       <div className="-mt-6 w-5/6">
-        {[...Array(8)].map((_, index) => (
+        {listToShow.map((item, index) => (
           <Card
             key={index}
-            imageSrc="/assets/images/Logo.png"
-            title="عنوان خبر یا مقاله"
-            description="این یک توضیح کوتاه برای محتوای کارت است که می‌تواند چند خط باشد."
+            imageSrc={item.urlToImage}
+            title={item.title}
+            description={item.description}
+            url={item.url}
           />
         ))}
       </div>
     </section>
   );
 }
-
-// "use client";
-// import React, { useEffect, useState } from "react";
-// import CategoryList from "@/components/molecules/CategoryList";
-// import Card from "@/components/molecules/Card";
-// import { getNews } from "@/services/news";
-
-// export default function NewsSection() {
-//   const [newsList, setNewsList] = useState([]);
-
-//   useEffect(() => {
-//     const fetchNews = async () => {
-//       const data = await getNews();
-//       setNewsList(data);
-//     };
-
-//     fetchNews();
-//   }, []);
-
-//   return (
-//     <section className="w-full flex flex-col justify-center items-center bg-white py-2">
-//       <div className="-mt-6 w-5/6">
-//         <CategoryList />
-//         {newsList.map((item) => (
-//           <Card
-//             key={item.id}
-//             imageSrc={item.imageSrc}
-//             title={item.title}
-//             description={item.description}
-//           />
-//         ))}
-//       </div>
-//     </section>
-//   );
-// }
