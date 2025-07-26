@@ -1,21 +1,14 @@
+import axios from "axios";
+
 export async function sendSearchQuery(query) {
   try {
-    const response = await fetch("http://localhost:8080/news/search", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ query }),
+    const response = await axios.post("http://localhost:8080/news/search", {
+      query,
     });
 
-    if (!response.ok) {
-      throw new Error("خطا در دریافت نتایج جستجو");
-    }
-
-    const data = await response.json();
-    return data;
+    return response.data;
   } catch (error) {
-    console.error("خطا:", error);
+    console.error("خطا در دریافت نتایج جستجو:", error);
     return [];
   }
 }
